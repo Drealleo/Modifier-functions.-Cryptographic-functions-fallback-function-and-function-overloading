@@ -1,0 +1,72 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract MyContract {
+
+    // Modifier functions
+    address public owner;
+    modifier onlyOwner {
+        require(msg.sender == owner, "Only the owner can call this function");
+        _;
+    }
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    // Cryptographic functions
+    function hash(string memory _input) public pure returns (bytes32) {
+        return keccak256(bytes(_input));
+    }
+
+    function verify(bytes32 _hash, bytes memory _signature, address _signer) public pure returns (bool) {
+        bytes32 messageHash = keccak256(abi.encodePacked("\x19Celo Signed Message:\n32", _hash));
+        return recoverSigner(messageHash, _signature) == _signer;
+    }
+
+    function recoverSigner(bytes32 _messageHash, bytes memory _signature) internal pure returns (address) {
+        uint8 v;
+        bytes32 r;
+        bytes32 s;
+
+        (v, r, s) = splitSignature(_signature);
+
+        return ecrecover(_messageHash, v, r, s);
+    }
+
+    function splitSignature(bytes memory _signature) internal pure returns (uint8, bytes32, bytes32) {
+        require(_signature.length == 65, "Invalid signature length");
+
+        bytes32 r;
+        bytes32 s;
+        uint8 v;
+
+        assembly {
+            r := mload(add(_signature, 32))
+            s := mload(add(_signature, 64))
+            v := byte(0, mload(add(_signature, 96)))
+        }
+
+        return (v, r, s);
+    }
+
+    // Fallback function
+    fallback() external payable {
+        // Do something with the received CELO
+    }
+
+    // Function overloading
+    function add(uint256 _a, uint256 _b) public pure returns (uint256) {
+        return _a + _b;
+    }
+
+    function add(string memory _a, string memory _b) public pure returns (string memory) {
+        bytes memory _ba = bytes(_a);
+        bytes memory _bb = bytes(_b);
+        bytes memory _bc = new bytes(_ba.length + _bb.length);
+        uint k = 0;
+        for (uint i = 0; i < _ba.length; i++) _bc[k++] = _ba[i];
+        for (uint i = 0; i < _bb.length; i++) _bc[k++] = _bb[i];
+        return string(_bc);
+    }
+}

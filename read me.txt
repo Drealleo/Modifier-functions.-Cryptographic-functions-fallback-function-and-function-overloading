@@ -1,0 +1,10 @@
+In this code repository, we have:
+
+°A MyContract contract that demonstrates modifier functions, cryptographic functions, fallback functions, and function overloading on the Celo blockchain.
+°The onlyOwner modifier that allows only the contract owner to call certain functions.
+°The hash function that takes a string input and returns its hash value using the keccak256 function.
+°The verify function that takes a hash value, a signature, and a signer address and verifies if the signature was signed by the signer address for the given hash value.
+°The recoverSigner function that takes a message hash and a signature and recovers the signer address from the signature.
+°The splitSignature function that takes a signature and returns its v, r, and s components.
+°The fallback function that is executed when the contract receives CELO without any function call.
+°The add function that is overloaded
